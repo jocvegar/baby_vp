@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Baby VP</title>
+    <style>
+      body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+        background-color: pink;
+      }
+
+      #app {
+        text-align: center;
+      }
+
+      #name-list {
+        list-style: none;
+        padding: 0;
+        font-size: 2em;
+        font-weight: bold;
+      }
+
+      #name-list li {
+        margin: 5px 0;
+        color: #333;
+        transition: color 0.3s;
+      }
+
+      #name-list li:hover {
+        color: #555;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app">
+      <div v-if="loading">HOLA!</div>
+      <ul v-else id="name-list">
+        <li v-for="name in currentNames" :key="name">{{ name }}</li>
+      </ul>
+    </div>
+
+    <script type="module">
+      import { createApp } from "https://unpkg.com/vue@3/dist/vue.esm-browser.js";
+
+      createApp({
+        data() {
+          return {
+            loading: true,
+            boyNames: ["Julian", "José", "Emilio", "Joaquín"],
+            girlNames: ["Camila", "Ariana", "Valentina", "Emilia"],
+            currentNames: [],
+          };
+        },
+        methods: {
+          shuffleNames() {
+            this.currentNames = this.currentNames
+              .map((value) => ({ value, sort: Math.random() }))
+              .sort((a, b) => a.sort - b.sort)
+              .map(({ value }) => value);
+          },
+          setNamesAndShuffle(namesList) {
+            this.currentNames = [...namesList];
+            this.shuffleNames();
+          },
+          handleBaclgroundColor() {
+            const colors = ["lightblue", "pink"];
+            let index = 0;
+            const targetTime = new Date();
+
+            targetTime.setFullYear(2024);
+            targetTime.setMonth(10);
+            targetTime.setDate(17);
+            targetTime.setHours(14, 0, 0, 0);
+
+            const intervalId = setInterval(() => {
+              const now = new Date();
+
+              if (now >= targetTime) {
+                document.body.style.backgroundColor = "lightblue";
+                this.currentNames = ["It's a ????"];
+                clearInterval(intervalId);
+              } else {
+                document.body.style.backgroundColor = colors[index];
+
+                if (colors[index] === "pink") {
+                  this.setNamesAndShuffle(this.girlNames);
+                } else {
+                  this.setNamesAndShuffle(this.boyNames);
+                }
+
+                index = (index + 1) % colors.length;
+                setInterval(this.shuffleNames(), 1000);
+              }
+              this.loading = false;
+            }, 1000);
+          },
+        },
+        mounted() {
+          this.handleBaclgroundColor();
+        },
+      }).mount("#app");
+    </script>
+  </body>
+</html>
